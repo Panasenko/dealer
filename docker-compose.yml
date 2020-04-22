@@ -7,23 +7,6 @@
 version: "3"
 
 services:
-  web:
-   build: backend/.
-   container_name: web
-   ports:
-   - "3000:3000"
-   networks:
-   - node-red-net
-   environment:
-   - VIRTUAL_HOST=develop.loc
-   volumes:
-   - ./backend:/usr/src/app
-   restart: always
-   depends_on:
-   - redis
-   - mongo
-   - timescaledb 
-
   nodered:
    image: nodered/node-red-docker:latest
    container_name: nodered
@@ -32,14 +15,13 @@ services:
    ports:
    - "1880:1880"
    networks:
-   - node-red-net
+   - dealer-net
    volumes:
    - ./nodered/data:/data
    restart: always
    depends_on:
    - redis
-   - mongo
-   - timescaledb  
+   - postgres
 
   redis:
    image: redis
@@ -48,7 +30,7 @@ services:
    ports:
    - "6379:6379"
    networks:
-   - node-red-net
+   - dealer-net
    volumes:
    - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
    - ./db/redis/data:/data     
@@ -56,28 +38,17 @@ services:
    - /usr/local/etc/redis/redis.conf
    restart: always
 
-  mongo:
-   image: mongo
-   container_name: mongodb   
-   ports:
-   - "27017:27017"
-   networks:
-   - node-red-net
-   volumes:
-   - ./db/mongodb/data:/data/db
-   restart: always
-
-  timescaledb:
-   image: timescale/timescaledb:latest
-   container_name: timescaledb
+  postgres:
+   image: postgres
+   container_name: postgres
    ports:
    - "5432:5432"
    environment:
    - POSTGRES_PASSWORD=548987
    networks:   
-   - node-red-net
+   - dealer-net
    volumes:
-   - ./db/timescaledb/data:/var/lib/postgresql/data
+   - ./db/postgresql/data:/var/lib/postgresql/data
    restart: always
 
   pgadmin:
@@ -90,30 +61,11 @@ services:
    - PGADMIN_DEFAULT_PASSWORD=548987  
    - SERVER_PORT=5050
    networks:
-   - node-red-net
-   volumes:
-   - ./admin/pgAdmin4:/var/lib/pgadmin
+   - dealer-net
+   # volumes:
+   # - ./admin/pgAdmin4:/var/lib/pgadmin
    depends_on:
-   - timescaledb      
-   restart: always
-
-  rabbitmq:
-   image: rabbitmq:3-management
-   container_name: rabbitmq
-   hostname: rabbitmq_web
-   volumes:
-   - ./rabbitmq/etc/:/etc/rabbitmq/
-   - ./rabbitmq/data/:/var/lib/rabbitmq/
-   - ./rabbitmq/logs/:/var/log/rabbitmq/
-   environment:
-     RABBITMQ_ERLANG_COOKIE: cookie 
-     RABBITMQ_DEFAULT_USER: user
-     RABBITMQ_DEFAULT_PASS: password
-   ports:
-   - 5672:5672
-   - 15672:15672
-   networks:
-   - node-red-net
+   - postgres      
    restart: always
 
   nginx:
@@ -123,11 +75,12 @@ services:
    ports:
    - 80:80
    depends_on:
-   - web
+   - redis-commander
+   - nodered
    volumes:
    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
    networks:
-      node-red-net:
+      dealer-net:
         ipv4_address: 10.0.0.10 
 
   redis-commander:
@@ -142,10 +95,10 @@ services:
    ports:
    - "8081:8081"
    networks:
-   - node-red-net
+   - dealer-net
 
 networks:
-    node-red-net:
+   dealer-net:
       driver: bridge
       ipam:
         driver: default
