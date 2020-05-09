@@ -617,7 +617,7 @@
   },
   "node-red-dashboard": {
    "name": "node-red-dashboard",
-   "version": "2.19.4",
+   "version": "2.21.0",
    "local": true,
    "nodes": {
     "ui_base": {
@@ -830,8 +830,7 @@
      "module": "node-red-dashboard",
      "file": "/data/node_modules/node-red-dashboard/nodes/ui_spacer.js"
     }
-   },
-   "pending_version": "2.21.0"
+   }
   },
   "node-red-contrib-moment": {
    "name": "node-red-contrib-moment",
@@ -859,6 +858,23 @@
      "file": "/data/node_modules/node-red-contrib-moment/moment/nrhumanizer.js"
     }
    }
+  },
+  "node-red-contrib-image-output": {
+   "name": "node-red-contrib-image-output",
+   "version": "0.6.2",
+   "local": true,
+   "nodes": {
+    "image": {
+     "name": "image",
+     "types": [
+      "image"
+     ],
+     "enabled": true,
+     "local": true,
+     "module": "node-red-contrib-image-output",
+     "file": "/data/node_modules/node-red-contrib-image-output/image/image.js"
+    }
+   }
   }
  },
  "_credentialSecret": "986d91591c4bc68f9e7f2465514d73b9ae3df56c21d5ceca24acc54cca3433a0",
@@ -874,7 +890,7 @@
      "view-show-grid": true
     }
    },
-   "menu-menu-item-sidebar": true
+   "menu-menu-item-sidebar": false
   }
  },
  "contextProviders": {}

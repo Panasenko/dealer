@@ -1,2 +1,3 @@
-db/*
+db/redis/*
+db/postgresql/*
 nodered/data/node_modules/
