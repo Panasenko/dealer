@@ -1,3 +1,6 @@
 db/redis/*
 db/postgresql/*
 nodered/data/node_modules/
+/.idea/*
+/sql_commands/*
+/data/*
